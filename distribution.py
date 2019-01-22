@@ -15,9 +15,9 @@ def eigsorted(cov):
     return vals[order], vecs[:,order]
 
 mean = [0, 0]
-cov = [[30, 16], [16, 20]]
+cov = [[2, 0], [0, 2]]
 
-x, y = np.random.multivariate_normal(mean, cov, 1000).T
+x, y = np.random.multivariate_normal(mean, cov, 100).T
 
 ax = plt.subplot(111)
 
