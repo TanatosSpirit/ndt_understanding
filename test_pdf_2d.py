@@ -17,9 +17,9 @@ fig = plt.figure()
 ax = fig.gca(projection='3d')
 
 # Make data.
-mu_1 = 2
-mu_2 = 0
-mu = [mu_1, mu_1] 
+mu_1 = 0
+mu_2 = 1
+mu = [mu_1, mu_2] 
 sigma_1 = 2 
 sigma_2 = 2
 sigma_12 = 1
@@ -31,6 +31,9 @@ Y = np.arange(-5, 5, 0.1)
 X, Y = np.meshgrid(X, Y)
 
 Z = PDF2d.pdf(sigma, mu, X, Y)
+
+print(PDF2d.gradPDF(sigma, mu, 0, 0))
+print(PDF2d.hessianPDF(sigma, mu, 0, 0))
 
 # Plot the surface.
 surf = ax.plot_surface(X, Y, Z, cmap=cm.coolwarm,
