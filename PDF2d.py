@@ -34,7 +34,9 @@ def pdf(sigma, mu, X, Y):
     expression = expr(sigma, mu, X, Y)
     return alfa * np.exp(betta*expression)
 
-def gradPDF(sigma, mu, x, y):
+def gradPDF(sigma, mu, p):
+    x = p[0]
+    y = p[1]
     detSigma = det(sigma)
     alfa = norm(detSigma)
     betta = coef(detSigma)
@@ -46,7 +48,9 @@ def gradPDF(sigma, mu, x, y):
     grad = [dfdx, dfdy]
     return grad
 
-def hessianPDF(sigma, mu, x, y):
+def hessianPDF(sigma, mu, p):
+    x = p[0]
+    y = p[1]
     detSigma = det(sigma)
     alfa = norm(detSigma)
     betta = coef(detSigma)
