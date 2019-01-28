@@ -12,17 +12,18 @@ from matplotlib.ticker import LinearLocator, FormatStrFormatter
 import numpy as np
 
 import PDF2d
+import Newton
 
 fig = plt.figure()
 ax = fig.gca(projection='3d')
 
 # Make data.
-mu_1 = 0
-mu_2 = 0
+mu_1 = 0.
+mu_2 = 0.
 mu = [mu_1, mu_2] 
-sigma_1 = 2 
-sigma_2 = 2
-sigma_12 = 1
+sigma_1 = 2. 
+sigma_2 = 4.
+sigma_12 = 1.
 sigma = [[sigma_1, sigma_12],
          [sigma_12, sigma_2]]
 X = np.arange(-5, 5, 0.1)
@@ -32,15 +33,33 @@ X, Y = np.meshgrid(X, Y)
 
 Z = PDF2d.pdf(sigma, mu, X, Y)
 
-p = [1., 1.]
+#Test of grad
+##print("sigma: ", sigma)
+#p = [-1.,-2.]
+#print(PDF2d.gradPDF(sigma, mu, p))
+#h = PDF2d.hessianPDFtrue(sigma, mu, p)
+#print("H: ", h)
 
-grad = PDF2d.gradPDF(sigma, mu, p)
-g = np.array(grad)
-print(g)
+#t1 = np.arange(-2.0, 2.0, 0.1)
+#t2 = np.zeros(t1.size)
+#value = []
+#for i in range(t1.size):
+#    p = [t1[i], t2[i]]
+#    t = PDF2d.gradPDF(sigma, mu, p)
+#    value.append(t[0])
+#print(t1)
 
-hessian = PDF2d.hessianPDF(sigma, mu, p)
-h = np.array(hessian)
-print(h)
+#plt.figure(1)
+#plt.subplot(211)
+#plt.plot(t1, value, 'r--')
+
+
+#Example of Newton's algorithm
+p = [-0.7, 0.7]
+eps = 0.1
+print("Init guess: ", p)
+p = Newton.Newton(p, eps, sigma, mu)
+print("Solution ", p)
 
 # Plot the surface.
 surf = ax.plot_surface(X, Y, Z, cmap=cm.coolwarm,

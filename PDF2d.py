@@ -6,6 +6,7 @@ Created on Tue Jan 22 13:10:40 2019
 """
 
 import numpy as np
+from scipy.misc import derivative
 
 def det(sigma):
     return sigma[0][0]*sigma[1][1]-sigma[1][0]**2
@@ -58,8 +59,39 @@ def hessianPDF(sigma, mu, p):
     exdx = exprdx(sigma, mu, x, y)
     exdy = exprdy(sigma, mu, x, y)
     ddfdxx = alfa * betta**2 * np.exp(betta*ex) * 2*sigma[0][0] * exdx
-    ddfdyy = alfa * betta**2 * np.exp(betta*ex) * 2*sigma[1][1] * exdy
     ddfdxy = alfa * betta**2 * np.exp(betta*ex) * 2*sigma[1][0] * exdy
+    ddfdyy = alfa * betta**2 * np.exp(betta*ex) * 2*sigma[1][1] * exdy
     ddfdyx = alfa * betta**2 * np.exp(betta*ex) * 2*sigma[1][0] * exdx
     hessian = [[ddfdxx, ddfdxy], [ddfdyx, ddfdyy]]
     return hessian
+
+def fdx(x, y, sigma, mu):
+    detSigma = det(sigma)
+    alfa = norm(detSigma)
+    betta = coef(detSigma)
+    expression = expr(sigma, mu, x, y)
+    exdx = exprdx(sigma, mu, x, y)
+    return(alfa * betta * np.exp(betta*expression)*exdx) 
+
+def fdy(x, y, sigma, mu):
+    detSigma = det(sigma)
+    alfa = norm(detSigma)
+    betta = coef(detSigma)
+    expression = expr(sigma, mu, x, y)
+    exdy = exprdy(sigma, mu, x, y)
+    return(alfa * betta * np.exp(betta*expression)*exdy) 
+
+def partial_derivative(func, var=0, point=[]):
+    args = point[:]
+    def wraps(x):
+        args[var] = x
+        return func(*args)
+    return derivative(wraps, point[var], dx = 1e-6, n=1)
+
+def hessianPDFtrue(sigma, mu, p):
+    initPos = [p[0], p[1], sigma, mu]
+    h11 = partial_derivative(fdx, 0, initPos)
+    h12 = partial_derivative(fdx, 1, initPos)
+    h21 = partial_derivative(fdy, 0, initPos)
+    h22 = partial_derivative(fdy, 1, initPos)
+    return [[h11, h12], [h21, h22]]
