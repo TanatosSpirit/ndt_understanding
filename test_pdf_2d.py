@@ -21,7 +21,7 @@ ax = fig.gca(projection='3d')
 mu_1 = 0.
 mu_2 = 0.
 mu = [mu_1, mu_2] 
-sigma_1 = 2. 
+sigma_1 = 8. 
 sigma_2 = 4.
 sigma_12 = 1.
 sigma = [[sigma_1, sigma_12],
@@ -55,8 +55,8 @@ Z = PDF2d.pdf(sigma, mu, X, Y)
 
 
 #Example of Newton's algorithm
-p = [-0.7, 0.7]
-eps = 0.1
+p = [-1.2, 1.3]
+eps = 1e-3
 print("Init guess: ", p)
 p = Newton.Newton(p, eps, sigma, mu)
 print("Solution ", p)
