@@ -17,8 +17,8 @@ def Newton(p0, eps, sigma, mu):
     g = PDF2d.gradPDF(sigma, mu, p)
     grad = np.array(g)
     gradNorm = LA.norm(grad)
-    print("\n----- Number of iteration: ", numberIter, "-----")
     print("gradNorm: ", gradNorm)
+    print("\n----- Number of iteration: ", numberIter, "-----")
     while not converged:
 #        h = PDF2d.hessianPDF(sigma, mu, p)
         h = PDF2d.hessianPDFtrue(sigma, mu, p)
@@ -28,18 +28,15 @@ def Newton(p0, eps, sigma, mu):
         print("deltaP: ", deltaP)
         p = p + deltaP
         print("P: ", p)
-        numberIter += 1
-        print("\n----- Number of iteration: ", numberIter, "-----")
-        print("gradNorm: ", gradNorm)
         g = PDF2d.gradPDF(sigma, mu, p)
         grad = np.array(g)
         gradNorm = LA.norm(grad)
+        print("gradNorm: ", gradNorm)
         if gradNorm < eps:
-            print("Converged!")
-            print("Number of iteration: ", numberIter)
+            print("\nConverged!")
+            print("Spent iterations: ", numberIter)
             converged = True
-    #    while n > 0:
-    #        n //= 10  # это эквивалентно n = n // 10
-    #        length += 1
-    #    print(length)
+        else:
+            numberIter += 1
+            print("\n----- Number of iteration: ", numberIter, "-----")
     return p

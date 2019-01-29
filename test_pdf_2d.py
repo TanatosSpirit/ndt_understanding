@@ -55,8 +55,8 @@ Z = PDF2d.pdf(sigma, mu, X, Y)
 
 
 #Example of Newton's algorithm
-p = [-1.2, 1.3]
-eps = 1e-3
+p = [-1.0, 1.2]
+eps = 1e-4
 print("Init guess: ", p)
 p = Newton.Newton(p, eps, sigma, mu)
 print("Solution ", p)
