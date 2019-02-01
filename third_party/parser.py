@@ -36,7 +36,7 @@ print(len(scanNp[2000,:]))
 # First set up the figure, the axis, and the plot element we want to animate
 fig = plt.figure(figsize=(10,10))
 #plt.gca().set_aspect('equal', adjustable='box')
-ax = plt.axes(xlim=(-25, 25), ylim=(0, 50))
+ax = plt.axes(xlim=(-35, 35), ylim=(0, 70))
 line, = ax.plot([], [],'ro')
 
 # initialization function: plot the background of each frame
@@ -54,7 +54,7 @@ def animate(i):
 
 # call the animator.  blit=True means only re-draw the parts that have changed.
 anim = animation.FuncAnimation(fig, animate, init_func=init,
-                               frames=200, interval=20, blit=True)
+                               frames=len(scanNp[:,0]), interval=20, blit=True)
 
 anim.save('basic_animation.mp4', fps=30, extra_args=['-vcodec', 'libx264'])
 
