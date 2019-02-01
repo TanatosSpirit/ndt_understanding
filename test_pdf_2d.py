@@ -12,7 +12,7 @@ from matplotlib.ticker import LinearLocator, FormatStrFormatter
 import numpy as np
 
 import PDF2d
-import Newton
+from Newton import Newton
 
 fig = plt.figure()
 ax = fig.gca(projection='3d')
@@ -55,10 +55,10 @@ Z = PDF2d.pdf(sigma, mu, X, Y)
 
 
 #Example of Newton's algorithm
-p = [-1.0, 1.2]
-eps = 1e-4
+p = [-1.0, 0.1]
+eps = 1e-5
 print("Init guess: ", p)
-p = Newton.Newton(p, eps, sigma, mu)
+p = Newton(p, eps, sigma, mu, False)
 print("Solution ", p)
 
 # Plot the surface.

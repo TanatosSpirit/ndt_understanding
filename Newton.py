@@ -9,7 +9,7 @@ import numpy as np
 import PDF2d
 from numpy import linalg as LA
 
-def Newton(p0, eps, sigma, mu):
+def Newton(p0, eps, sigma, mu, single = False):
     converged = False
     numberIter = 1
     gradNorm = 0
@@ -18,7 +18,11 @@ def Newton(p0, eps, sigma, mu):
     grad = np.array(g)
     gradNorm = LA.norm(grad)
     print("gradNorm: ", gradNorm)
-    print("\n----- Number of iteration: ", numberIter, "-----")
+    if gradNorm < eps:
+        print("\nConverged already!")
+        return p
+    if not single:
+        print("\n----- Number of iteration: ", numberIter, "-----")
     while not converged:
 #        h = PDF2d.hessianPDF(sigma, mu, p)
         h = PDF2d.hessianPDFtrue(sigma, mu, p)
@@ -28,15 +32,18 @@ def Newton(p0, eps, sigma, mu):
         print("deltaP: ", deltaP)
         p = p + deltaP
         print("P: ", p)
-        g = PDF2d.gradPDF(sigma, mu, p)
-        grad = np.array(g)
-        gradNorm = LA.norm(grad)
-        print("gradNorm: ", gradNorm)
-        if gradNorm < eps:
-            print("\nConverged!")
-            print("Spent iterations: ", numberIter)
-            converged = True
+        if not single:
+            g = PDF2d.gradPDF(sigma, mu, p)
+            grad = np.array(g)
+            gradNorm = LA.norm(grad)
+            print("gradNorm: ", gradNorm)
+            if gradNorm < eps:
+                print("\nConverged!")
+                print("Spent iterations: ", numberIter)
+                converged = True
+            else:
+                numberIter += 1
+                print("\n----- Number of iteration: ", numberIter, "-----")
         else:
-            numberIter += 1
-            print("\n----- Number of iteration: ", numberIter, "-----")
+            converged = True
     return p
