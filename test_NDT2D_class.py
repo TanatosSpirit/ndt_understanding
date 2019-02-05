@@ -19,17 +19,20 @@ from third_party.parser import parse
 filepath = r'D:\workspace\python\NDT_Understanding\ndt_understanding\dataset\sick_dataset.txt'
 scans = parse(filepath)
 
-nOS = 20
+nOS = 1
+next_nOS = nOS + 1
     
 ndt = NDT()
 ndt.setEpsilon(1e-2)
-ndt.setResolutionGrid(5)
+ndt.setResolutionGrid(1)
 ndt.setTargetCloud(scans[nOS])
-#ndt.setSourceCloud(points)
+ndt.setSourceCloud(scans[next_nOS])
 
-init_guess = [2, 2, 0 ]
+init_guess = [0, 0, 0]
 parameters = []
 parameters, x_line, y_line= ndt.align(init_guess)
+
+alignedCloud = ndt.getSourceCloud()
 
 # цвета элипсов [sigma1, sigma2, sigma3]
 colorEll = ['red', 'orange', 'blue'] 
@@ -61,19 +64,24 @@ ax.yaxis.grid(True, which='major')
 ax.set_xticks(x_line, minor=True)
 ax.xaxis.grid(True, which='minor')      
  
-X = scans[nOS,:,0].T
-Y = scans[nOS,:,1].T
-plt.scatter(X, Y)
+#X = scans[nOS,:,0].T
+#Y = scans[nOS,:,1].T
+#plt.scatter(X, Y)
+X = scans[next_nOS,:,0].T
+Y = scans[next_nOS,:,1].T
+plt.scatter(X,Y,alpha=1.0, c='red')
+
+X = alignedCloud[0,:]
+Y = alignedCloud[1,:]
+plt.scatter(X,Y,alpha=0.5, c='black')
 plt.axis('equal')
-plt.xlim(-25, 25)
-plt.ylim(0, 50)
+plt.xlim(-10, 15)
+plt.ylim(0, 24)
 plt.gca().set_aspect('equal', adjustable='box')
 #plt.grid(b=True, which='major', color='#666666', linestyle='-')
 
 plt.show()
 # Конец отрисовки
-
-
 
 ## Plot the raw points...
 #x, y = points.T

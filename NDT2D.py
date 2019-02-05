@@ -41,6 +41,9 @@ class NDT2D:
     def getFinalTransformation(self):
         pass
     
+    def getSourceCloud(self):
+        return self.filtered_cloud
+    
     def calcDistributionParameters(self, cloud):
         sigma = np.cov(cloud)
         mu = np.mean(cloud, axis=1)
@@ -114,7 +117,7 @@ class NDT2D:
                     subcloud_x.append(cloud_sub_x)
                     subcloud_y.append(cloud_sub_y)
     #    cuttedScan = [subcloud_x, subcloud_x]   
-        print("borderOfCell: ", borderOfCell)
+#        print("borderOfCell: ", borderOfCell)
             
         return subcloud_x, subcloud_y, x_line, y_line, borderOfCell
         
@@ -128,16 +131,23 @@ class NDT2D:
             cloud = np.array([subcloud_x[i], subcloud_y[i]])
             mu, sigma = self.calcDistributionParameters(cloud)
             parametres.append([sigma, mu])
-            print("mu: ", mu, "\nsigma: ", sigma)
+#            print("mu: ", mu, "\nsigma: ", sigma)
         
         #Registration
-#        self.init_guess = init_guess
+        self.init_guess = init_guess
 #        score = 0
 #        g = [0,0]
 #        H = [[0,0], [0,0]]
-#        self.transformFilteredCloud()
-#        for i in range(len(self.filtered_cloud[0,:])):
-#            self.filtered_cloud[:,i] = Newton(self.filtered_cloud[:,i], self.epsilon, sigma, mu, True)
+        self.transformFilteredCloud()
+        for i in range(len(self.filtered_cloud[0,:])):
+            x_temp = self.filtered_cloud[0][i]
+            y_temp = self.filtered_cloud[1][i]
+            for bi in range(len(borderOfCell)):
+                if x_temp >= borderOfCell[bi][0][0] and x_temp < borderOfCell[bi][0][1]:
+                    if y_temp >= borderOfCell[bi][1][0] and y_temp < borderOfCell[bi][1][1]:
+                        sigma = parametres[bi][0]
+                        mu = parametres[bi][1]
+                        self.filtered_cloud[:,i] = Newton(self.filtered_cloud[:,i], self.epsilon, sigma, mu, True)
         return parametres, x_line, y_line
             
        
