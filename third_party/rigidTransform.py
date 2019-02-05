@@ -17,16 +17,21 @@ def rigid_transform_3D(A, B):
     assert len(A) == len(B)
 
     N = A.shape[0]; # total points
+    print("total points: ", N)
 
     centroid_A = mean(A, axis=0)
     centroid_B = mean(B, axis=0)
+    print("centroid_A: ", centroid_A)
+    print("centroid_B: ", centroid_B)
     
     # centre the points
     AA = A - tile(centroid_A, (N, 1))
     BB = B - tile(centroid_B, (N, 1))
+    print("centre the points A: \n", AA)
 
     # dot is matrix multiplication for array
     H = transpose(AA) * BB
+    print("H: \n", H)
 
     U, S, Vt = linalg.svd(H)
 
@@ -40,15 +45,15 @@ def rigid_transform_3D(A, B):
 
     t = -R*centroid_A.T + centroid_B.T
 
-    print( t)
-
     return R, t
 
 # Test with random data
 
 # Random rotation and translation
-R = mat(random.rand(3,3))
-t = mat(random.rand(3,1))
+#R = mat(random.rand(3,3))
+#t = mat(random.rand(3,1))
+R = mat(random.rand(2,2))
+t = mat(random.rand(2,1))
 
 # make R a proper rotation matrix, force orthonormal
 U, S, Vt = linalg.svd(R)
@@ -56,13 +61,15 @@ R = U*Vt
 
 # remove reflection
 if linalg.det(R) < 0:
-   Vt[2,:] *= -1
+#   Vt[2,:] *= -1
+   Vt[1,:] *= -1
    R = U*Vt
 
 # number of points
 n = 10
 
-A = mat(random.rand(n,3));
+#A = mat(random.rand(n,3));
+A = mat(random.rand(n,2));
 B = R*A.T + tile(t, (1, n))
 B = B.T;
 
