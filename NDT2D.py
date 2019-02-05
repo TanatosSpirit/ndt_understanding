@@ -91,37 +91,43 @@ class NDT2D:
         #    определенной ячейке 
         subcloud_x = []
         subcloud_y = []
+        borderOfCell = []
         for xi in range(int(x_parts)):
     #        print("xi: ", xi)
             for yi in range(int(y_parts)):
     #            print("yi: ", yi)
                 cloud_sub_x = []
                 cloud_sub_y = []
+                borders = [[x_min+(cellSize*(xi)), x_min+(cellSize*(xi+1))],
+                           [y_min+(cellSize*(yi)), y_min+(cellSize*(yi+1))]]
                 for i in range(len(self.target_cloud)):
                     x_temp = self.target_cloud[i,0]
                     y_temp = self.target_cloud[i,1]
-                    if x_temp >= x_min+(cellSize*(xi)) and x_temp < x_min+(cellSize*(xi+1)):
-                        if y_temp >= y_min+(cellSize*(yi)) and y_temp < y_min+(cellSize*(yi+1)): 
+                    if x_temp >= borders[0][0] and x_temp < borders[0][1]:
+                        if y_temp >= borders[1][0] and y_temp < borders[1][1]: 
     #                        print("Point(", i, "): X =", x_temp, "; Y=", y_temp)
                             cloud_sub_x.append(x_temp)
                             cloud_sub_y.append(y_temp)
     #            print("Len_cloud_sub: ", len(cloud_sub_x))
                 if len(cloud_sub_x) > 2:
+                    borderOfCell.append(borders)
                     subcloud_x.append(cloud_sub_x)
                     subcloud_y.append(cloud_sub_y)
-    #    cuttedScan = [subcloud_x, subcloud_x]     
+    #    cuttedScan = [subcloud_x, subcloud_x]   
+        print("borderOfCell: ", borderOfCell)
             
-        return subcloud_x, subcloud_y, x_line, y_line
+        return subcloud_x, subcloud_y, x_line, y_line, borderOfCell
         
     def align(self, init_guess):
         #Initialisation
         mu = []
         sigma = [[],[]]
-        subcloud_x, subcloud_y, x_line, y_line = self.allocateCellStructure()
+        subcloud_x, subcloud_y, x_line, y_line , borderOfCell= self.allocateCellStructure()
         parametres = []
         for i in range(len(subcloud_x)):
             cloud = np.array([subcloud_x[i], subcloud_y[i]])
             mu, sigma = self.calcDistributionParameters(cloud)
+            parametres.append([sigma, mu])
             print("mu: ", mu, "\nsigma: ", sigma)
         
         #Registration
@@ -132,7 +138,7 @@ class NDT2D:
 #        self.transformFilteredCloud()
 #        for i in range(len(self.filtered_cloud[0,:])):
 #            self.filtered_cloud[:,i] = Newton(self.filtered_cloud[:,i], self.epsilon, sigma, mu, True)
-            
+        return parametres, x_line, y_line
             
        
         
