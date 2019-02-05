@@ -16,6 +16,7 @@ points = np.random.multivariate_normal(mean=(1,1), cov=[[3, 4],[4, 7]],
     
 ndt = NDT()
 ndt.setEpsilon(1e-2)
+ndt.setResolutionGrid(1)
 ndt.setTargetCloud(points)
 ndt.setSourceCloud(points)
 
@@ -24,10 +25,10 @@ ndt.align(init_guess)
 
 
 
-# Plot the raw points...
-x, y = points.T
-xR, yR = ndt.filtered_cloud
-plt.plot(x, y, 'ro', xR, yR, 'bo')
-plt.show()
+## Plot the raw points...
+#x, y = points.T
+#xR, yR = ndt.filtered_cloud
+#plt.plot(x, y, 'ro', xR, yR, 'bo')
+#plt.show()
 
 #input("\nPress Enter to continue...")
