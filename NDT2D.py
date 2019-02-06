@@ -148,6 +148,7 @@ class NDT2D:
                         sigma = parametres[bi][0]
                         mu = parametres[bi][1]
                         self.filtered_cloud[:,i] = Newton(self.filtered_cloud[:,i], self.epsilon, sigma, mu, True)
+                        print("")
         return parametres, x_line, y_line
             
        

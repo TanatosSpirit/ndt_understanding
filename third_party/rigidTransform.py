@@ -6,7 +6,8 @@ Created on Wed Jan 30 15:33:30 2019
 """
 
 from numpy import *
-from math import sqrt
+from math import sqrt, acos, pi
+import matplotlib.pyplot as plt
 
 # Input: expects Nx3 matrix of points
 # Returns R,t
@@ -72,6 +73,8 @@ n = 10
 A = mat(random.rand(n,2));
 B = R*A.T + tile(t, (1, n))
 B = B.T;
+B[0,0] = B[0,0] + 0.1
+B[1,1] = B[1,1] + 0.1
 
 # recover the transformation
 ret_R, ret_t = rigid_transform_3D(A, B)
@@ -98,9 +101,22 @@ print( "Rotation")
 print( R)
 print( "")
 
+print("Valid angle")
+print((acos(R[0,0])/pi)*180)
+print("")
+
+print("Calculated angle")
+print((acos(ret_R[0,0])/pi)*180)
+print("")
+
 print( "Translation")
 print( t)
 print ("")
 
 print ("RMSE:", rmse)
 print ("If RMSE is near zero, the function is correct!")
+
+fig, ax = plt.subplots()
+ax.plot(A[:,0], A[:,1], 'ro', B[:,0], B[:,1], 'bo')
+
+plt.show()

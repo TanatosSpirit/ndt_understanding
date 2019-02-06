@@ -20,11 +20,11 @@ filepath = r'D:\workspace\python\NDT_Understanding\ndt_understanding\dataset\sic
 scans = parse(filepath)
 
 nOS = 1
-next_nOS = nOS + 1
+next_nOS = nOS 
     
 ndt = NDT()
 ndt.setEpsilon(1e-2)
-ndt.setResolutionGrid(1)
+ndt.setResolutionGrid(2)
 ndt.setTargetCloud(scans[nOS])
 ndt.setSourceCloud(scans[next_nOS])
 
