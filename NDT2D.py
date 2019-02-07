@@ -66,10 +66,6 @@ class NDT2D:
         x_min, x_max, y_min, y_max = -25, 25, 0, 50
         cellSize = self.resolution
         
-        # ширина и длина облака точек
-        x_range = abs(x_min) + abs(x_max)
-        y_range = abs(y_min) + abs(y_max)
-        
         # остаток от деления на размер блока
         x_remainder = x_range % cellSize
         y_remainder = y_range % cellSize
@@ -123,6 +119,24 @@ class NDT2D:
         
     def align(self, init_guess):
         #Initialisation
+        x0 = init_guess[0]
+        y0 = init_guess[1]
+        yaw0 = init_guess[3]
+        
+        original_p = [x0, y0, yaw0]
+        
+        p = original_p
+        
+        x_min, x_max, y_min, y_max = -25, 25, 0, 50
+        cellSize = self.resolution
+        
+        # ширина и длина облака точек
+        x_range = abs(x_min) + abs(x_max)
+        y_range = abs(y_min) + abs(y_max)
+        
+        NX = x_range // cellSize
+        NY = y_range // cellSize
+        
         mu = []
         sigma = [[],[]]
         subcloud_x, subcloud_y, x_line, y_line , borderOfCell= self.allocateCellStructure()

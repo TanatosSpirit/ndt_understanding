@@ -11,6 +11,7 @@ import math
 import matplotlib.pyplot as plt
 from matplotlib.patches import Ellipse
 from third_party.parser import parse
+from makeOccupancyGrid import makeOccupancyGrid
 
 # Generate some random, correlated data
 #points = np.random.multivariate_normal(mean=(1,1), cov=[[3, 4],[4, 7]], 
@@ -19,10 +20,21 @@ from third_party.parser import parse
 filepath = r'D:\workspace\python\NDT_Understanding\ndt_understanding\dataset\sick_dataset.txt'
 scans = parse(filepath)
 
+PARAMS = {
+        'L': 1,
+        'xmin' : -25,
+        'xmax' :  25,
+        'ymin' :   0,
+        'ymax' :  50
+        }
+
+grids = makeOccupancyGrid(scans[1000],PARAMS)
+
 nOS = 1
-next_nOS = nOS 
+next_nOS = nOS + 1
     
 ndt = NDT()
+ndt.setMaximumIterations(50)
 ndt.setEpsilon(1e-2)
 ndt.setResolutionGrid(2)
 ndt.setTargetCloud(scans[nOS])
