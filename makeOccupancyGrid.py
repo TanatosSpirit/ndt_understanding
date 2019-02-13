@@ -47,28 +47,28 @@ def makeOccupancyGrid(scan, PARAM):
     for i in range (NY):
         new = []                  
         for j in range (NX):   
-            new.append([0, [[0,0],[0,0]]])      
+            new.append([[0,0], [[0,0],[0,0]]])
         ogrid1.append(new)
     
     ogrid2 = []                                                             
     for i in range (NY):  
         new = []                
         for j in range (NX):   
-            new.append([0, [[0,0],[0,0]]])       
+            new.append([[0,0], [[0,0],[0,0]]])
         ogrid2.append(new)
     
     ogrid3 = []                                                             
     for i in range (NY): 
         new = []                 
         for j in range (NX):   
-            new.append([0, [[0,0],[0,0]]])     
+            new.append([[0,0], [[0,0],[0,0]]])
         ogrid3.append(new)
         
     ogrid4 = []                                                             
     for i in range (NY): 
         new = []                  
         for j in range (NX):   
-            new.append([0, [[0,0],[0,0]]])      
+            new.append([[0,0], [[0,0],[0,0]]])
         ogrid4.append(new)
     
     
@@ -114,7 +114,7 @@ def makeOccupancyGrid(scan, PARAM):
         # Calculate the cell where the point (x,y) should fall in.
        
         ix1 = min([((x - xmin) // cellSize) , NX-1])
-        iy1 = min([((y - ymin) // cellSize) , NY])
+        iy1 = min([((y - ymin) // cellSize) , NY-1])
         
         ix2 = min([((x - xmin + cellSize/2) // cellSize) , NX-1])
         iy2 = iy1
@@ -153,7 +153,7 @@ def makeOccupancyGrid(scan, PARAM):
                 pgrid = grids[kk]
                 
                 npg = len(pgrid[i][j])
-                mpoints = 0
+                mpoints = [0,0]
                 covpoints = [[0,0],
                              [0,0]]
                 tots = tots + npg;
