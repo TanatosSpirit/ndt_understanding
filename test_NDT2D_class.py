@@ -11,38 +11,6 @@ import math
 import matplotlib.pyplot as plt
 from util.parser import parse
 
-# Generate some random, correlated data
-#points = np.random.multivariate_normal(mean=(1,1), cov=[[3, 4],[4, 7]], 
-#                                       size=100)
-
-filepath = r'D:\workspace\python\NDT_Understanding\ndt_understanding\dataset\sick_dataset.txt'
-scans = parse(filepath)
-
-PARAMS = {
-        'L': 1,
-        'xmin' : -25,
-        'xmax' :  25,
-        'ymin' :   0,
-        'ymax' :  50
-        }
-
-#grids = makeOccupancyGrid(scans[1000],PARAMS)
-
-nOS = 1000
-next_nOS = nOS + 1
-    
-ndt = NDT()
-ndt.set_maximum_iterations(50)
-ndt.set_epsilon(1e-5)
-ndt.set_resolution_grid(2)
-ndt.set_target_cloud(scans[nOS])
-ndt.set_source_cloud(scans[next_nOS])
-
-init_guess = [0, 0, 0]
-parameters = []
-R, t, NI = ndt.align(init_guess)
-
-print("R = ", R, "t = ", t, "NI = ", NI)
 def transformation(R, t, scan):
     theta = R
     translate = np.array([t[0], t[1]])
@@ -54,6 +22,32 @@ def transformation(R, t, scan):
     for i in range(len(scanNp.T)):
         scanNp[:, i] = scanNp[:, i] + translate
     return scanNp
+
+# Generate some random, correlated data
+#points = np.random.multivariate_normal(mean=(1,1), cov=[[3, 4],[4, 7]], 
+#                                       size=100)
+
+filepath = r'D:\workspace\python\NDT_Understanding\ndt_understanding\dataset\sick_dataset.txt'
+scans = parse(filepath)
+
+nOS = 1000
+next_nOS = nOS + 2
+
+first_scan = np.array(scans[nOS])
+second_scan = np.array(scans[next_nOS])
+    
+ndt = NDT()
+ndt.set_maximum_iterations(50)
+ndt.set_epsilon(1e-5)
+ndt.set_resolution_grid(2)
+ndt.set_target_cloud(first_scan)
+ndt.set_source_cloud(second_scan)
+
+init_guess = [0, 0, 0]
+parameters = []
+R, t, NI = ndt.align(init_guess)
+
+print("R = ", R, "t = ", t, "NI = ", NI)
 
 cloudAligned = transformation(R, t, scans[next_nOS])
 
@@ -119,7 +113,7 @@ cloudAligned = transformation(R, t, scans[next_nOS])
 # Конец отрисовки
 
 # Plot the raw points...
-x, y = scans[nOS].T
+x, y = first_scan.T
 xR, yR = cloudAligned
 plt.plot(x, y, 'ro', xR, yR, 'bo')
 plt.show()

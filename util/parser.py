@@ -14,9 +14,10 @@ def spherical2Euclidean(scan):
     scanEucl = []
     for i in range(len(scan)):
         p = [0,0]
-        p[0] = scan[i] * math.cos(i*math.pi/180)
-        p[1] = scan[i] * math.sin(i*math.pi/180)
-        scanEucl.append(p)
+        if scan[i] < 51.:
+            p[0] = scan[i] * math.cos(i*math.pi/180)
+            p[1] = scan[i] * math.sin(i*math.pi/180)
+            scanEucl.append(p)
     return scanEucl
 
 def parse(path):
@@ -31,8 +32,7 @@ def parse(path):
     scanTemp = []
     for i in range(len(scanRaw)):
         scanTemp.append(spherical2Euclidean(scanRaw[i][:]))
-    scanXY = np.array(scanTemp)
-    return scanXY
+    return scanTemp
 
 def main(path):
     scanXY = parse(path)
@@ -49,15 +49,14 @@ def main(path):
     
     # animation function.  This is called sequentially
     def animate(i):
-        scanForPlot = scanXY[i,:]
+        scanForPlot = np.array(scanXY[i])
         x, y = scanForPlot.T
         line.set_data(x, y)
         return line,
-    
+
     # call the animator.  blit=True means only re-draw the parts that have changed.
     anim = animation.FuncAnimation(fig, animate, init_func=init,
-                                   frames=len(scanXY[:,0]), interval=20, blit=True)
-    
+                                   frames=len(scanXY), interval=50, blit=True)
     #anim.save('basic_animation.mp4', fps=30, extra_args=['-vcodec', 'libx264'])
     
     plt.show()
