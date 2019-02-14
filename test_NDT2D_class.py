@@ -6,6 +6,8 @@ Created on Thu Jan 31 11:33:29 2019
 """
 
 import numpy as np
+import pylab
+
 from NDT2D import Ndt2D as NDT
 import math
 import matplotlib.pyplot as plt
@@ -30,26 +32,41 @@ def transformation(R, t, scan):
 filepath = r'D:\workspace\python\NDT_Understanding\ndt_understanding\dataset\sick_dataset.txt'
 scans = parse(filepath)
 
-nOS = 1000
-next_nOS = nOS + 2
-
-first_scan = np.array(scans[nOS])
-second_scan = np.array(scans[next_nOS])
-    
 ndt = NDT()
 ndt.set_maximum_iterations(50)
 ndt.set_epsilon(1e-5)
-ndt.set_resolution_grid(2)
-ndt.set_target_cloud(first_scan)
-ndt.set_source_cloud(second_scan)
+ndt.set_resolution_grid(1)
 
-init_guess = [0, 0, 0]
-parameters = []
-R, t, NI = ndt.align(init_guess)
+pylab.ion()
+for n in range(len(scans)-1):
 
-print("R = ", R, "t = ", t, "NI = ", NI)
+    nOS = n
+    next_nOS = nOS + 1
 
-cloudAligned = transformation(R, t, scans[next_nOS])
+    first_scan = np.array(scans[nOS])
+    second_scan = np.array(scans[next_nOS])
+
+    ndt.set_target_cloud(first_scan)
+    ndt.set_source_cloud(second_scan)
+
+    init_guess = [0, 0, 0]
+    R, t, NI = ndt.align(init_guess)
+
+    print("R = ", R, "t = ", t, "NI = ", NI)
+
+    cloudAligned = transformation(R, t, scans[next_nOS])
+
+    x, y = first_scan.T
+    xR, yR = cloudAligned
+
+    pylab.clf()
+
+    pylab.axes(xlim=(-15, 15), ylim=(0, 30))
+    pylab.plot(x, y, 'ro', xR, yR, 'bo')
+
+    pylab.draw()
+
+    pylab.pause(0.01)
 
 
 
@@ -112,10 +129,10 @@ cloudAligned = transformation(R, t, scans[next_nOS])
 # plt.show()
 # Конец отрисовки
 
-# Plot the raw points...
-x, y = first_scan.T
-xR, yR = cloudAligned
-plt.plot(x, y, 'ro', xR, yR, 'bo')
-plt.show()
+# # Plot the raw points...
+# x, y = first_scan.T
+# xR, yR = cloudAligned
+# plt.plot(x, y, 'ro', xR, yR, 'bo')
+# plt.show()
 
 #input("\nPress Enter to continue...")
