@@ -9,9 +9,7 @@ import numpy as np
 from NDT2D import Ndt2D as NDT
 import math
 import matplotlib.pyplot as plt
-from matplotlib.patches import Ellipse
-from third_party.parser import parse
-from makeOccupancyGrid import makeOccupancyGrid
+from util.parser import parse
 
 # Generate some random, correlated data
 #points = np.random.multivariate_normal(mean=(1,1), cov=[[3, 4],[4, 7]], 
@@ -44,7 +42,7 @@ init_guess = [0, 0, 0]
 parameters = []
 R, t, NI = ndt.align(init_guess)
 
-print("R = ", R, "t = ", t)
+print("R = ", R, "t = ", t, "NI = ", NI)
 def transformation(R, t, scan):
     theta = R
     translate = np.array([t[0], t[1]])

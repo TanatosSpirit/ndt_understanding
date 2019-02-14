@@ -11,8 +11,8 @@ from matplotlib import cm
 from matplotlib.ticker import LinearLocator, FormatStrFormatter
 import numpy as np
 
-import PDF2d
-from Newton import Newton
+import misc.PDF2d as PDF2d
+from misc.Newton import Newton
 
 fig = plt.figure()
 ax = fig.gca(projection='3d')
