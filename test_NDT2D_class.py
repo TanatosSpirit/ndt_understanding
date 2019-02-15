@@ -38,6 +38,12 @@ ndt.set_epsilon(1e-5)
 ndt.set_resolution_grid(1)
 
 pylab.ion()
+
+R_map = 0
+p_map = [0,0]
+map = np.array(scans[0])
+map = map.T
+
 for n in range(len(scans)-1):
 
     nOS = n
@@ -51,18 +57,24 @@ for n in range(len(scans)-1):
 
     init_guess = [0, 0, 0]
     R, t, NI = ndt.align(init_guess)
+    R_map = R_map + R
+    p_map = [p_map[0] + t[0], p_map[1] + t[1]]
 
     print("R = ", R, "t = ", t, "NI = ", NI)
 
-    cloudAligned = transformation(R, t, scans[next_nOS])
+    cloudAligned = transformation(R_map, p_map, scans[next_nOS])
+    map_piece = transformation(R_map, p_map, scans[next_nOS])
+    map = np.append(map, map_piece, axis=1)
 
-    x, y = first_scan.T
+    # x, y = first_scan.T
     xR, yR = cloudAligned
+    x_map, y_map = map
 
     pylab.clf()
 
-    pylab.axes(xlim=(-15, 15), ylim=(0, 30))
-    pylab.plot(x, y, 'ro', xR, yR, 'bo')
+    pylab.axes(xlim=(-50, 50), ylim=(0, 100))
+    # pylab.plot(x, y, 'ro', xR, yR, 'bo', x_map, y_map, 'go')
+    pylab.plot(x_map, y_map, 'ro', p_map[0], p_map[1], 'go', xR, yR, 'bo')
 
     pylab.draw()
 
