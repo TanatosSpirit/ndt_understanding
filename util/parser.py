@@ -20,7 +20,7 @@ def spherical2Euclidean(scan):
             scanEucl.append(p)
     return scanEucl
 
-def parse(path):
+def parse_lidar_log(path):
     scanRaw = []
     with open(path) as fp:  
        line = fp.readline()
@@ -34,8 +34,22 @@ def parse(path):
         scanTemp.append(spherical2Euclidean(scanRaw[i][:]))
     return scanTemp
 
-def main(path):
-    scanXY = parse(path)
+
+def parse_odometry_log(path):
+    odo_raw = []
+    with open(path) as fp:
+        line = fp.readline()
+        while line:
+            odo_line = [float(x) for x in line.split()]
+            odo_raw.append(odo_line)
+            line = fp.readline()
+
+    return odo_raw
+
+def main(lidar_log, odometry_log):
+    scanXY = parse_lidar_log(lidar_log)
+    odometry = parse_odometry_log(odometry_log)
+    print(odometry)
     # First set up the figure, the axis, and the plot element we want to animate
     fig = plt.figure(figsize=(10,10))
     #plt.gca().set_aspect('equal', adjustable='box')
@@ -62,6 +76,7 @@ def main(path):
     plt.show()
 
 if __name__ == '__main__':
-    filepath = r'D:\workspace\python\NDT_Understanding\ndt_understanding\dataset\sick_dataset.txt'
-    main(filepath)
+    lidar_log = r'D:\workspace\python\NDT_Understanding\ndt_understanding\dataset\sick_dataset.txt'
+    odometry_log = r'D:\workspace\python\NDT_Understanding\ndt_understanding\dataset\dataset_edmonton.rawlog_ODO.txt'
+    main(lidar_log, odometry_log)
     

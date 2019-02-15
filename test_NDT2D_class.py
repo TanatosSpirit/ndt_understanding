@@ -11,7 +11,7 @@ import pylab
 from NDT2D import Ndt2D as NDT
 import math
 import matplotlib.pyplot as plt
-from util.parser import parse
+from util.parser import parse_lidar_log, parse_odometry_log
 
 def transformation(R, t, scan):
     theta = R
@@ -29,13 +29,16 @@ def transformation(R, t, scan):
 #points = np.random.multivariate_normal(mean=(1,1), cov=[[3, 4],[4, 7]], 
 #                                       size=100)
 
-filepath = r'D:\workspace\python\NDT_Understanding\ndt_understanding\dataset\sick_dataset.txt'
-scans = parse(filepath)
+lidar_log = r'D:\workspace\python\NDT_Understanding\ndt_understanding\dataset\sick_dataset.txt'
+odometry_log = r'D:\workspace\python\NDT_Understanding\ndt_understanding\dataset\dataset_edmonton.rawlog_ODO.txt'
+
+scans = parse_lidar_log(lidar_log)
+odometry = parse_odometry_log(odometry_log)
 
 ndt = NDT()
 ndt.set_maximum_iterations(50)
 ndt.set_epsilon(1e-5)
-ndt.set_resolution_grid(1)
+ndt.set_resolution_grid(2)
 
 pylab.ion()
 
@@ -55,12 +58,16 @@ for n in range(len(scans)-1):
     ndt.set_target_cloud(first_scan)
     ndt.set_source_cloud(second_scan)
 
-    init_guess = [0, 0, 0]
+    init_guess = [odometry[n+1][1], odometry[n+1][0], odometry[n+1][2]]
     R, t, NI = ndt.align(init_guess)
-    R_map = R_map + R
-    p_map = [p_map[0] + t[0], p_map[1] + t[1]]
+    if odometry[n+1][0] == 0. and odometry[n+1][1] == 0.0 and odometry[n+1][2] == 0.0:
+        R_map = R_map + 0.
+        p_map = [p_map[0] + 0., p_map[1] + 0.]
+    else:
+        R_map = R_map + R
+        p_map = [p_map[0] + t[0], p_map[1] + t[1]]
 
-    print("R = ", R, "t = ", t, "NI = ", NI)
+    print("Itaration = ", n+1, "R = ", R, "t = ", t, "NI = ", NI, "R_map = ", R_map, "p_map = ", p_map)
 
     cloudAligned = transformation(R_map, p_map, scans[next_nOS])
     map_piece = transformation(R_map, p_map, scans[next_nOS])
