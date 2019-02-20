@@ -293,6 +293,7 @@ class Ndt2D:
                 del lasterror[0]
                 del corr[0]
 
+        print("merr = ", merr)
         # Final result in quaternion. !ВНИМАНИЕ! Почему расчет производится таким образом?
         R = normAngle(p[2] - original_p[2])
         

@@ -14,7 +14,7 @@ def spherical2Euclidean(scan):
     scanEucl = []
     for i in range(len(scan)):
         p = [0,0]
-        if scan[i] < 51.:
+        if scan[i] < 15.:
             p[0] = scan[i] * math.cos(i*math.pi/180)
             p[1] = scan[i] * math.sin(i*math.pi/180)
             scanEucl.append(p)

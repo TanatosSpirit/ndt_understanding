@@ -37,17 +37,20 @@ odometry = parse_odometry_log(odometry_log)
 
 ndt = NDT()
 ndt.set_maximum_iterations(50)
-ndt.set_epsilon(1e-5)
-ndt.set_resolution_grid(2)
+ndt.set_epsilon(1e-4)
+ndt.set_resolution_grid(3)
 
 pylab.ion()
-
+start_scan = 1000
 R_map = 0
 p_map = [0,0]
-map = np.array(scans[0])
+
+R_odo = 0
+p_odo = [0,0]
+map = np.array(scans[start_scan])
 map = map.T
 
-for n in range(len(scans)-1):
+for n in range(start_scan, len(scans)-1):
 
     nOS = n
     next_nOS = nOS + 1
@@ -58,34 +61,57 @@ for n in range(len(scans)-1):
     ndt.set_target_cloud(first_scan)
     ndt.set_source_cloud(second_scan)
 
-    init_guess = [odometry[n+1][1], odometry[n+1][0], odometry[n+1][2]]
+    p_transform = np.array([odometry[n][1], odometry[n][0]])
+    p_transform_np = np.array(p_transform)
+    cosR = math.cos(odometry[n][2])
+    sinR = math.sin(odometry[n][2])
+    rotate = np.array([[cosR, -sinR], [sinR, cosR]])
+    point_transform = np.dot(rotate, p_transform_np.T)
+    p_t_x, p_t_y = point_transform[0], point_transform[1]
+
+    init_guess = [p_t_x, p_t_y, odometry[n][2]]
+    # init_guess = [0, 0, 0]
+
     R, t, NI = ndt.align(init_guess)
-    if odometry[n+1][0] == 0. and odometry[n+1][1] == 0.0 and odometry[n+1][2] == 0.0:
+
+    if odometry[n][0] == 0. and odometry[n][1] == 0.0 and odometry[n][2] == 0.0:
         R_map = R_map + 0.
         p_map = [p_map[0] + 0., p_map[1] + 0.]
     else:
         R_map = R_map + R
         p_map = [p_map[0] + t[0], p_map[1] + t[1]]
 
-    print("Itaration = ", n+1, "R = ", R, "t = ", t, "NI = ", NI, "R_map = ", R_map, "p_map = ", p_map)
+    R_odo = R_odo + odometry[n][2]
+    p_transform = np.array([odometry[n][1], odometry[n][0]])
+    p_transform_np = np.array(p_transform)
+    cosR = math.cos(R_odo)
+    sinR = math.sin(R_odo)
+    rotate = np.array([[cosR, -sinR], [sinR, cosR]])
+    point_transform = np.dot(rotate, p_transform_np.T)
+    p_odo = [p_odo[0] + point_transform[0], p_odo[1] + point_transform[1]]
+
+    print("Itaration = ", n+1-start_scan, "R = ", R, "t = ", t, "NI = ", NI, "R_map = ", R_map, "p_map = ", p_map)
 
     cloudAligned = transformation(R_map, p_map, scans[next_nOS])
-    map_piece = transformation(R_map, p_map, scans[next_nOS])
-    map = np.append(map, map_piece, axis=1)
+    cloud_aligned_odom = transformation(R_odo, p_odo, scans[next_nOS])
+
+    if n%20 == 0:
+        map = np.append(map, cloudAligned, axis=1)
 
     # x, y = first_scan.T
     xR, yR = cloudAligned
+    xO, yO = cloud_aligned_odom
     x_map, y_map = map
 
     pylab.clf()
 
-    pylab.axes(xlim=(-50, 50), ylim=(0, 100))
-    # pylab.plot(x, y, 'ro', xR, yR, 'bo', x_map, y_map, 'go')
-    pylab.plot(x_map, y_map, 'ro', p_map[0], p_map[1], 'go', xR, yR, 'bo')
+    pylab.axes(xlim=(-30, 30), ylim=(0, 60))
+    # pylab.plot(xR, yR, 'bo', xO, yO, 'ro')
+    pylab.plot(x_map, y_map, 'r.', p_map[0], p_map[1], 'go', xR, yR, 'b.')
 
     pylab.draw()
 
-    pylab.pause(0.01)
+    pylab.pause(0.001)
 
 
 
